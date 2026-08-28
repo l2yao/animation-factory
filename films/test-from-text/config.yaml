@@ -1,0 +1,11 @@
+film: test-from-text
+input_text: C:\Users\Long\Documents\animation-factory\films\test-from-text\input.txt
+preset: pixar
+duration_target: 45
+aspects:
+- '16:9'
+- '9:16'
+- '1:1'
+render:
+  engine: BLENDER_EEVEE
+  fps: 24

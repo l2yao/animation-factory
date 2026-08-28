@@ -1,0 +1,11 @@
+film: demo-001
+input_text: C:\Users\Long\Documents\animation-factory\films\demo-001\input.txt
+preset: pixar
+duration_target: 60
+aspects:
+- '16:9'
+- '9:16'
+- '1:1'
+render:
+  engine: BLENDER_EEVEE
+  fps: 24

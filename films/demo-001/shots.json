@@ -1,0 +1,36 @@
+{
+  "film": "demo-001",
+  "duration_target": 60,
+  "shots": [
+    {
+      "shot_id": "shot_001",
+      "description": "A small brave character discovers a glowing secret in a cozy Pixar-style town.",
+      "narration": "A small brave character discovers a glowing secret in a cozy Pixar-style town.",
+      "duration_sec": 6.7,
+      "start_sec": 0,
+      "camera": "wide",
+      "action": "Pixar-style character performs: A small brave character discovers a glowing secret in a cozy",
+      "dialog": "A small brave character discovers a glowing secret in a cozy Pixar-style town."
+    },
+    {
+      "shot_id": "shot_002",
+      "description": "Through kindness and courage, they share the light with everyone.",
+      "narration": "Through kindness and courage, they share the light with everyone.",
+      "duration_sec": 5.5,
+      "start_sec": 6.7,
+      "camera": "closeup",
+      "action": "Pixar-style character performs: Through kindness and courage, they share the light with ever",
+      "dialog": "Through kindness and courage, they share the light with everyone."
+    },
+    {
+      "shot_id": "shot_003",
+      "description": "B-roll pixar environment",
+      "narration": "",
+      "duration_sec": 3.0,
+      "start_sec": 12.2,
+      "camera": "wide",
+      "action": "Environment breathing, light flicker",
+      "dialog": ""
+    }
+  ]
+}

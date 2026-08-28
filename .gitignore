@@ -1,0 +1,10 @@
+# Factory outputs per-film (keep structure, ignore renders)
+films/*/render/frames/*.png
+films/*/final/*.mp4
+films/*/audio/*.wav
+films/*/audio/*.mp3
+films/*/scenes/*.blend
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/

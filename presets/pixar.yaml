@@ -1,0 +1,33 @@
+# Pixar-style preset — cartoon shading via Principled BSDF
+style: pixar
+description: "Pixar cartoon look — subsurface, soft specular, rim light"
+
+shader:
+  principled:
+    base_color: [0.95, 0.82, 0.65]  # warm skin default
+    subsurface: 0.12
+    subsurface_radius: [1.0, 0.2, 0.1]
+    subsurface_color: [0.95, 0.45, 0.35]
+    specular: 0.5
+    roughness: 0.45
+    sheen: 0.3
+    clearcoat: 0.1
+  toon_ramp: true
+  rim_light:
+    enabled: true
+    color: [0.6, 0.8, 1.0]
+    strength: 1.2
+
+lighting:
+  hdri: "assets_library/hdris/studio_small_03_1k.hdr"
+  key_light: { energy: 1000, size: 2.5 }
+  fill_light: { energy: 500, color: [0.8, 0.9, 1.0] }
+
+character:
+  style: chibi_pixar  # proportions: large head, eyes
+  rig: rigify
+  outline: false
+
+camera:
+  lens: 50
+  safe_frame: 0.85  # keep action inside for 9:16 crop
