@@ -1,0 +1,30 @@
+# Render tier for Google Colab GPU (T4 / A100 / L4) — CUDA/OptiX enabled
+# Use: factory new-film ... ; factory generate --film <name> --preset render_colab  or override via config.yaml
+render:
+  engine: BLENDER_EEVEE  # fast default; switch to CYCLES for photoreal Pixar (see below)
+  # EEVEE on Colab: ~2-3 sec/frame at 1080p, good for Pixar look
+  # Set to CYCLES for path-traced Pixar subsurface (slower but higher quality)
+  # engine: CYCLES
+  resolution: [1920, 1080]  # master 16:9; derivatives via ffmpeg crop
+  fps: 24
+  samples: 64        # EEVEE TAA samples; Cycles samples if engine=CYCLES -> 128
+  use_gtao: true
+  use_bloom: true
+  use_ssr: true
+  use_motion_blur: false
+  film_transparent: false
+  output_format: PNG
+  color_depth: "8"
+  cycles_fallback: true
+  cycles_samples: 128
+  cycles_device: CUDA  # Colab: CUDA or OPTIX (T4 supports OptiX). Auto-fallback to CUDA if OptiX fails.
+
+aspects:
+  "16:9": { width: 1920, height: 1080, crop: false }
+  "9:16": { width: 1080, height: 1920, crop: true, crop_from: "16:9" }
+  "1:1":  { width: 1080, height: 1080, crop: true, crop_from: "16:9" }
+
+performance:
+  tile_size: 256
+  use_persistent_data: true
+  vram_limit_mb: 15360  # T4 15GB, A100 40GB — safe upper bound

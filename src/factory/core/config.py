@@ -37,6 +37,7 @@ def resolve_preset(preset_name: str) -> dict:
     return {}
 
 def load_film_config(film_dir: Path) -> dict:
+    import os
     cfg_path = film_dir / "config.yaml"
     if not cfg_path.exists():
         raise FileNotFoundError(f"config.yaml not found in {film_dir}")
@@ -44,7 +45,15 @@ def load_film_config(film_dir: Path) -> dict:
     # merge presets
     preset_name = cfg.get("preset", cfg.get("style_preset", "pixar"))
     preset = resolve_preset(preset_name)
-    render_preset = load_yaml(PRESET_DIR / "render_old_nvidia.yaml") if (PRESET_DIR / "render_old_nvidia.yaml").exists() else {}
+    # Auto-pick render tier: Colab GPU vs old local NVIDIA
+    render_preset_name = cfg.get("render_preset")
+    if not render_preset_name:
+        # Detect Colab (has COLAB_GPU or COLAB_RELEASE_TAG) or Linux with GPU
+        if os.environ.get("COLAB_RELEASE_TAG") or os.environ.get("COLAB_GPU") or Path("/opt/blender/blender").exists():
+            render_preset_name = "render_colab"
+        else:
+            render_preset_name = "render_old_nvidia"
+    render_preset = resolve_preset(render_preset_name)
     merged = deep_merge(render_preset, preset)
     merged = deep_merge(merged, cfg)
     # Normalize aspects

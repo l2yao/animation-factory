@@ -3,13 +3,34 @@ import subprocess
 from pathlib import Path
 
 def _find_blender():
-    # Common win paths
-    candidates = [
-        shutil.which("blender"),
+    import glob, os
+    candidates = []
+    # 1. PATH
+    which = shutil.which("blender")
+    if which:
+        candidates.append(which)
+    # 2. Colab / Linux paths
+    candidates += [
+        "/opt/blender/blender",
+        "/usr/local/bin/blender",
+        "/usr/bin/blender",
+        "./blender/blender",
+        "./blender-4.5/blender",
+        "/content/blender/blender",
+    ]
+    # 3. Windows common paths — check newest first, glob fallback
+    candidates += [
+        r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe",
+        r"C:\Program Files\Blender Foundation\Blender 4.5\blender.exe",
         r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe",
         r"C:\Program Files\Blender Foundation\Blender 4.1\blender.exe",
         r"C:\Program Files\Blender Foundation\Blender\blender.exe",
     ]
+    candidates += glob.glob(r"C:\Program Files\Blender Foundation\Blender *\blender.exe")
+    # 4. Env override
+    env_blender = os.environ.get("BLENDER_PATH")
+    if env_blender:
+        candidates.insert(0, env_blender)
     for c in candidates:
         if c and Path(c).exists():
             return c

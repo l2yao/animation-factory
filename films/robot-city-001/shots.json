@@ -1,0 +1,56 @@
+{
+  "film": "robot-city-001",
+  "duration_target": 60,
+  "shots": [
+    {
+      "shot_id": "shot_001",
+      "description": "A lost robot finds friendship in a Pixar city, where glowing streets and kind strangers help it discover that being diff",
+      "narration": "A lost robot finds friendship in a Pixar city, where glowing streets and kind strangers help it discover that being different is what makes it special. The city glows at dusk, towering neon signs reflecting off rainy streets.",
+      "duration_sec": 8,
+      "start_sec": 0,
+      "camera": "wide",
+      "action": "Establishing shot — Pixar city glowing: A lost robot finds friendship in a Pixar city, where glowing streets a",
+      "dialog": ""
+    },
+    {
+      "shot_id": "shot_002",
+      "description": "The little robot wanders alone, its light flickering, watching other robots laugh together in warm shop windows.",
+      "narration": "The little robot wanders alone, its light flickering, watching other robots laugh together in warm shop windows.",
+      "duration_sec": 8,
+      "start_sec": 8,
+      "camera": "medium",
+      "action": "Character enters frame, hesitant: The little robot wanders alone, its light flickering, watching other r",
+      "dialog": "The little robot wanders alone, its light flickering, watching other robots laugh together in warm shop windows."
+    },
+    {
+      "shot_id": "shot_003",
+      "description": "A kind child notices the robot, kneels down and offers a gentle hand. Friendship sparks — a shared glow.",
+      "narration": "A kind child notices the robot, kneels down and offers a gentle hand. Friendship sparks — a shared glow.",
+      "duration_sec": 8,
+      "start_sec": 16,
+      "camera": "closeup",
+      "action": "Close on eyes — longing: A kind child notices the robot, kneels down and offers a gentle hand. ",
+      "dialog": "A kind child notices the robot, kneels down and offers a gentle hand. Friendship sparks — a shared glow."
+    },
+    {
+      "shot_id": "shot_004",
+      "description": "Together they walk through the Pixar city, the robot's light now steady and bright. Being different is what makes it spe",
+      "narration": "Together they walk through the Pixar city, the robot's light now steady and bright. Being different is what makes it special, and now it belongs.",
+      "duration_sec": 8,
+      "start_sec": 24,
+      "camera": "over_shoulder",
+      "action": "Kind gesture — friendship begins: Together they walk through the Pixar city, the robot's light now stead",
+      "dialog": "Together they walk through the Pixar city, the robot's light now steady and bright. Being different is what makes it special, and now it belongs."
+    },
+    {
+      "shot_id": "shot_005",
+      "description": "Wide sunset shot: the robot and its new friend watch the city lights together — no longer lost.",
+      "narration": "Wide sunset shot: the robot and its new friend watch the city lights together — no longer lost.",
+      "duration_sec": 8,
+      "start_sec": 32,
+      "camera": "dutch",
+      "action": "Montage — walking together, city alive: Wide sunset shot: the robot and its new friend watch the city lights t",
+      "dialog": "Wide sunset shot: the robot and its new friend watch the city lights together — no longer lost."
+    }
+  ]
+}

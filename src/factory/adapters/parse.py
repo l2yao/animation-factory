@@ -7,24 +7,56 @@ def _split_sentences(text: str):
     parts = re.split(r'(?<=[.!?])\s+|\n+', text.strip())
     return [p.strip() for p in parts if p.strip()]
 
+def _expand_single_sentence(text: str):
+    """If input is 1-2 sentences, expand into Pixar 3-act beats for better pacing."""
+    text = text.strip()
+    if text.count(".") >= 2 or text.count("!") >= 2 or len(text.split()) > 35:
+        return None
+    # Simple heuristic: split on commas / conjunctions to create beats
+    # For short prompt like robot prompt, create dramatic expansion
+    beats = [
+        f"{text} The city glows at dusk, towering neon signs reflecting off rainy streets.",
+        "The little robot wanders alone, its light flickering, watching other robots laugh together in warm shop windows.",
+        "A kind child notices the robot, kneels down and offers a gentle hand. Friendship sparks — a shared glow.",
+        "Together they walk through the Pixar city, the robot's light now steady and bright. Being different is what makes it special, and now it belongs.",
+        "Wide sunset shot: the robot and its new friend watch the city lights together — no longer lost."
+    ]
+    # Trim to ~5 beats
+    return beats
+
 def _make_shots(sentences, duration_target=90):
     # Target ~ 4-6 sec per shot for Pixar pacing
     avg_shot_sec = 5
     num_shots = max(3, min(20, round(duration_target / avg_shot_sec)))
-    # Distribute sentences across shots
-    shots = []
+    # Expand short prompts into multi-beat story
+    if len(sentences) <= 2 and sentences and len(" ".join(sentences).split()) < 40:
+        expanded = _expand_single_sentence(" ".join(sentences))
+        if expanded:
+            sentences = expanded
+            num_shots = min(num_shots, len(sentences) + 2)
     if not sentences:
         sentences = ["A quiet Pixar-style world awakens."]
     # chunk sentences
-    chunk_size = max(1, len(sentences) // num_shots + 1)
+    chunk_size = max(1, len(sentences) // num_shots + 1) if len(sentences) > num_shots else 1
+    shots = []
+    cams = ["wide", "medium", "closeup", "over_shoulder", "dutch", "wide", "closeup", "wide"]
+    actions = [
+        "Establishing shot — Pixar city glowing",
+        "Character enters frame, hesitant",
+        "Close on eyes — longing",
+        "Kind gesture — friendship begins",
+        "Montage — walking together, city alive",
+        "Hero moment — light shines bright",
+        "Wide sunset — belonging"
+    ]
     shot_id = 1
     time = 0
     for i in range(0, len(sentences), chunk_size):
         chunk = sentences[i:i+chunk_size]
         narration = " ".join(chunk)
-        duration = min(7, max(3, len(narration.split()) * 0.4 + 1.5))  # ~0.4s per word
-        # Camera heuristic
-        cam = ["wide", "medium", "closeup", "over_shoulder", "dutch"][shot_id % 5] if shot_id > 1 else "wide"
+        duration = min(8, max(3, len(narration.split()) * 0.38 + 1.8))
+        cam = cams[(shot_id-1) % len(cams)]
+        action = actions[(shot_id-1) % len(actions)]
         shots.append({
             "shot_id": f"shot_{shot_id:03d}",
             "description": narration[:120],
@@ -32,23 +64,23 @@ def _make_shots(sentences, duration_target=90):
             "duration_sec": round(duration, 1),
             "start_sec": round(time, 1),
             "camera": cam,
-            "action": f"Pixar-style character performs: {narration[:60]}",
-            "dialog": narration if len(narration.split()) < 25 else ""
+            "action": f"{action}: {narration[:70]}",
+            "dialog": narration if 5 < len(narration.split()) < 28 else ""
         })
         time += duration
         shot_id += 1
         if shot_id > num_shots:
             break
     # pad if too few
-    while len(shots) < min(3, num_shots):
+    while len(shots) < min(4, num_shots):
         shots.append({
             "shot_id": f"shot_{len(shots)+1:03d}",
-            "description": "B-roll pixar environment",
+            "description": "B-roll pixar environment — city lights twinkle",
             "narration": "",
             "duration_sec": 3.0,
             "start_sec": round(time, 1),
             "camera": "wide",
-            "action": "Environment breathing, light flicker",
+            "action": "Environment breathing, light flicker, crowds pass softly",
             "dialog": ""
         })
         time += 3.0
