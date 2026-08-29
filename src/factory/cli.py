@@ -54,16 +54,22 @@ def new_film(name, input_path, preset, render_preset, duration, force):
         if not input_text_val:
             input_text_val = str(placeholder)
 
+    # render_preset determines engine; don't hardcode EEVEE if Colab preset requested
+    render_cfg = {"fps": 24}
+    if render_preset == "render_colab":
+        render_cfg["engine"] = "BLENDER_EEVEE_NEXT"
+    elif render_preset:
+        # will be resolved via presets, keep minimal
+        pass
+    else:
+        render_cfg["engine"] = "BLENDER_EEVEE"
     config = {
         "film": name,
         "input_text": input_text_val,
         "preset": preset,
         "duration_target": duration,
         "aspects": ["16:9", "9:16", "1:1"],
-        "render": {
-            "engine": "BLENDER_EEVEE",
-            "fps": 24
-        }
+        "render": render_cfg
     }
     if render_preset:
         config["render_preset"] = render_preset

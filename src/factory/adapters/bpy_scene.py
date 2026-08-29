@@ -24,9 +24,23 @@ shots = []
 if shots_path.exists():
     shots = json.loads(shots_path.read_text(encoding="utf-8")).get("shots", [])
 
-# Render settings (EEVEE tuned for old NVIDIA like GTX 650 Ti 1GB)
+# Render settings (robust EEVEE handling)
 scene = bpy.context.scene
-scene.render.engine = 'BLENDER_EEVEE'
+# Blender 4.2: BLENDER_EEVEE, 5.0+: BLENDER_EEVEE_NEXT — try factory preset first, then fallbacks
+_engine_set = False
+for cand in (engine, 'BLENDER_EEVEE_NEXT', 'BLENDER_EEVEE', 'CYCLES'):
+    if not cand:
+        continue
+    try:
+        scene.render.engine = cand
+        print(f"Render engine: {cand}")
+        _engine_set = True
+        break
+    except Exception as e:
+        print(f"Engine {cand} failed: {e}")
+        continue
+if not _engine_set:
+    print(f"WARNING: could not set engine, keeping {scene.render.engine}")
 scene.render.resolution_x = __RES_X__
 scene.render.resolution_y = __RES_Y__
 scene.render.resolution_percentage = 100
@@ -35,17 +49,21 @@ scene.render.image_settings.file_format = 'PNG'
 scene.render.image_settings.color_depth = '8'
 scene.render.filepath = str(film_dir / "render" / "frames" / "frame_####")
 scene.render.fps = __FPS__
-# EEVEE settings
+# EEVEE settings — API differs between EEVEE and EEVEE_NEXT
 if hasattr(scene, "eevee"):
     ee = scene.eevee
-    # Blender 3.x vs 4.x API compat
     for attr, val in [("use_gtao", True), ("use_bloom", True), ("use_ssr", False)]:
         if hasattr(ee, attr):
-            setattr(ee, attr, val)
-    if hasattr(ee, "taa_render_samples"):
-        ee.taa_render_samples = __SAMPLES__
-    if hasattr(ee, "taa_samples"):
-        ee.taa_samples = __SAMPLES__
+            try:
+                setattr(ee, attr, val)
+            except Exception:
+                pass
+    for samp_attr in ("taa_render_samples", "taa_samples"):
+        if hasattr(ee, samp_attr):
+            try:
+                setattr(ee, samp_attr, __SAMPLES__)
+            except Exception:
+                pass
 
 # --- World / HDRI fallback (simple studio) ---
 world = bpy.data.worlds.new("FactoryWorld")

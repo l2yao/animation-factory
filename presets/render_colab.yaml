@@ -1,7 +1,7 @@
 # Render tier for Google Colab GPU (T4 / A100 / L4) — CUDA/OptiX enabled
 # Use: factory new-film ... ; factory generate --film <name> --preset render_colab  or override via config.yaml
 render:
-  engine: BLENDER_EEVEE  # fast default; switch to CYCLES for photoreal Pixar (see below)
+  engine: BLENDER_EEVEE_NEXT  # Blender 5.x rename (fallback to BLENDER_EEVEE on 4.x)
   # EEVEE on Colab: ~2-3 sec/frame at 1080p, good for Pixar look
   # Set to CYCLES for path-traced Pixar subsurface (slower but higher quality)
   # engine: CYCLES
