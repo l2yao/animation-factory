@@ -16,7 +16,7 @@ def main():
 @click.option("--name", required=True, help="Film folder name (e.g., my-film-001)")
 @click.option("--input", "input_path", required=False, help="Path to source text file or inline text")
 @click.option("--preset", default="pixar", help="Style preset (pixar)")
-@click.option("--render-preset", default=None, help="Render tier: render_old_nvidia (GTX 650 Ti) or render_colab (T4/A100)")
+@click.option("--render-preset", default="render_colab", help="Render preset (default: render_colab for Colab T4/A100)")
 @click.option("--duration", type=int, default=90, help="Target duration seconds")
 @click.option("--force", is_flag=True, help="Overwrite existing film folder")
 def new_film(name, input_path, preset, render_preset, duration, force):
@@ -54,15 +54,8 @@ def new_film(name, input_path, preset, render_preset, duration, force):
         if not input_text_val:
             input_text_val = str(placeholder)
 
-    # render_preset determines engine; don't hardcode EEVEE if Colab preset requested
-    render_cfg = {"fps": 24}
-    if render_preset == "render_colab":
-        render_cfg["engine"] = "BLENDER_EEVEE_NEXT"
-    elif render_preset:
-        # will be resolved via presets, keep minimal
-        pass
-    else:
-        render_cfg["engine"] = "BLENDER_EEVEE"
+    # Colab-only: default engine is BLENDER_EEVEE_NEXT (Blender 5.x)
+    render_cfg = {"fps": 24, "engine": "BLENDER_EEVEE_NEXT"}
     config = {
         "film": name,
         "input_text": input_text_val,

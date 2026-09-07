@@ -3,34 +3,22 @@ import subprocess
 from pathlib import Path
 
 def _find_blender():
-    import glob, os
+    import os
     candidates = []
-    # 1. PATH
+    # Env override first (Colab: BLENDER_PATH=/opt/blender/blender)
+    env_blender = os.environ.get("BLENDER_PATH", "/opt/blender/blender")
+    if env_blender:
+        candidates.append(env_blender)
+    # PATH
     which = shutil.which("blender")
     if which:
         candidates.append(which)
-    # 2. Colab / Linux paths
+    # Colab / Linux paths
     candidates += [
         "/opt/blender/blender",
         "/usr/local/bin/blender",
         "/usr/bin/blender",
-        "./blender/blender",
-        "./blender-4.5/blender",
-        "/content/blender/blender",
     ]
-    # 3. Windows common paths — check newest first, glob fallback
-    candidates += [
-        r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe",
-        r"C:\Program Files\Blender Foundation\Blender 4.5\blender.exe",
-        r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe",
-        r"C:\Program Files\Blender Foundation\Blender 4.1\blender.exe",
-        r"C:\Program Files\Blender Foundation\Blender\blender.exe",
-    ]
-    candidates += glob.glob(r"C:\Program Files\Blender Foundation\Blender *\blender.exe")
-    # 4. Env override
-    env_blender = os.environ.get("BLENDER_PATH")
-    if env_blender:
-        candidates.insert(0, env_blender)
     for c in candidates:
         if c and Path(c).exists():
             return c
@@ -45,7 +33,7 @@ def run(film_dir: Path, config: dict, dry_run: bool = False):
     out_dir.mkdir(parents=True, exist_ok=True)
 
     blender = _find_blender()
-    # Build command (EEVEE, old NVIDIA safe)
+    # Build command (Colab GPU, Blender 5.x EEVEE_NEXT)
     cmd = None
     if blend.exists() and blender:
         # Use blender -b <blend> -a  (render animation) or frame range
@@ -70,11 +58,9 @@ def run(film_dir: Path, config: dict, dry_run: bool = False):
         return {"blender": blender, "blend": str(blend), "cmd": cmd, "dry_run": True}
 
     if not blender:
-        # Simulate: create 3 placeholder pngs + info txt
-        print("Blender not found — creating placeholder render outputs (install Blender for real render)")
+        print("Blender not found — render on Colab GPU (see notebooks/colab_render.ipynb).")
         info = out_dir / "_RENDER_INFO.txt"
-        info.write_text(f"No Blender at {blender}. Placeholder for {film_dir.name}.\nInstall Blender 4.2 LTS, then re-run: factory generate --film {film_dir.name} --step render\n", encoding="utf-8")
-        # Create a tiny 1x1 png via python if PIL available? Just txt.
+        info.write_text(f"No Blender at {blender}. Placeholder for {film_dir.name}.\nRun on Colab: factory generate --film {film_dir.name} --step render\n", encoding="utf-8")
         return {"blender": None, "placeholder": str(info)}
 
     print(f"Rendering with: {' '.join(cmd)}")

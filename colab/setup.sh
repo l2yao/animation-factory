@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 set -e
-# Colab setup: download Blender 4.5 LTS (or 5.2) + install factory
+# Colab setup: download Blender 5.x + install factory
 # Usage on Colab: !bash colab/setup.sh  OR  !bash /content/animation-factory/colab/setup.sh
 
-BLENDER_VERSION=${BLENDER_VERSION:-4.5.2}
-# Use 4.5 LTS for stability; override with BLENDER_VERSION=5.2.0 for latest
+BLENDER_VERSION=${BLENDER_VERSION:-5.2.0}
 if [[ "$BLENDER_VERSION" == 5.* ]]; then
   BLENDER_URL="https://download.blender.org/release/Blender${BLENDER_VERSION%.*}/blender-${BLENDER_VERSION}-linux-x64.tar.xz"
 else

@@ -26,7 +26,7 @@ if shots_path.exists():
 
 # Render settings (robust EEVEE handling)
 scene = bpy.context.scene
-# Blender 4.2: BLENDER_EEVEE, 5.0+: BLENDER_EEVEE_NEXT — try factory preset first, then fallbacks
+# Blender 5.x uses BLENDER_EEVEE_NEXT (keep BLENDER_EEVEE/CYCLES as fallback for older blends)
 _engine_set = False
 for cand in (engine, 'BLENDER_EEVEE_NEXT', 'BLENDER_EEVEE', 'CYCLES'):
     if not cand:
@@ -222,8 +222,8 @@ def run(film_dir: Path, config: dict, dry_run: bool = False, mode="build"):
     else:
         res_x, res_y = 1920, 1080
     fps = render_cfg.get("fps", 24) if isinstance(render_cfg, dict) else 24
-    samples = render_cfg.get("samples", 16) if isinstance(render_cfg, dict) else 16
-    engine = render_cfg.get("engine", "BLENDER_EEVEE")
+    samples = render_cfg.get("samples", 64) if isinstance(render_cfg, dict) else 64
+    engine = render_cfg.get("engine", "BLENDER_EEVEE_NEXT")
     style = config.get("preset", config.get("style", "pixar"))
 
     scenes_dir = film_dir / "scenes"

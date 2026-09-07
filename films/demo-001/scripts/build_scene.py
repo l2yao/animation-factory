@@ -11,16 +11,30 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 film_dir = Path(r"C:\\Users\\Long\\Documents\\animation-factory\\films\\demo-001")
 shots_path = film_dir / "shots.json"
 style = "pixar"
-engine = "BLENDER_EEVEE"
+engine = "BLENDER_EEVEE_NEXT"
 
 # Load shots
 shots = []
 if shots_path.exists():
     shots = json.loads(shots_path.read_text(encoding="utf-8")).get("shots", [])
 
-# Render settings (EEVEE tuned for old NVIDIA like GTX 650 Ti 1GB)
+# Render settings (robust EEVEE handling)
 scene = bpy.context.scene
-scene.render.engine = 'BLENDER_EEVEE'
+# Blender 5.x uses BLENDER_EEVEE_NEXT (keep BLENDER_EEVEE/CYCLES as fallback for older blends)
+_engine_set = False
+for cand in (engine, 'BLENDER_EEVEE_NEXT', 'BLENDER_EEVEE', 'CYCLES'):
+    if not cand:
+        continue
+    try:
+        scene.render.engine = cand
+        print(f"Render engine: {cand}")
+        _engine_set = True
+        break
+    except Exception as e:
+        print(f"Engine {cand} failed: {e}")
+        continue
+if not _engine_set:
+    print(f"WARNING: could not set engine, keeping {scene.render.engine}")
 scene.render.resolution_x = 1920
 scene.render.resolution_y = 1080
 scene.render.resolution_percentage = 100
@@ -29,17 +43,21 @@ scene.render.image_settings.file_format = 'PNG'
 scene.render.image_settings.color_depth = '8'
 scene.render.filepath = str(film_dir / "render" / "frames" / "frame_####")
 scene.render.fps = 24
-# EEVEE settings
+# EEVEE settings — API differs between EEVEE and EEVEE_NEXT
 if hasattr(scene, "eevee"):
     ee = scene.eevee
-    # Blender 3.x vs 4.x API compat
     for attr, val in [("use_gtao", True), ("use_bloom", True), ("use_ssr", False)]:
         if hasattr(ee, attr):
-            setattr(ee, attr, val)
-    if hasattr(ee, "taa_render_samples"):
-        ee.taa_render_samples = 16
-    if hasattr(ee, "taa_samples"):
-        ee.taa_samples = 16
+            try:
+                setattr(ee, attr, val)
+            except Exception:
+                pass
+    for samp_attr in ("taa_render_samples", "taa_samples"):
+        if hasattr(ee, samp_attr):
+            try:
+                setattr(ee, samp_attr, 64)
+            except Exception:
+                pass
 
 # --- World / HDRI fallback (simple studio) ---
 world = bpy.data.worlds.new("FactoryWorld")

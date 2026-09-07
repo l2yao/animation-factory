@@ -16,4 +16,4 @@ def test_parse_generates_shots(tmp_path=Path(tempfile.mkdtemp())):
 def test_cli_new_film():
     # smoke via subprocess ideally, but check scaffolding logic exists
     assert (DEFAULT_ROOT / "presets" / "pixar.yaml").exists()
-    assert (DEFAULT_ROOT / "presets" / "render_old_nvidia.yaml").exists()
+    assert (DEFAULT_ROOT / "presets" / "render_colab.yaml").exists()
